@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>MiBalance — Control de dinero</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--text:#172033;--muted:#778198;--line:#e8ebf2;--green:#16a879;--red:#e45b68;--blue:#5c6df8;--navy:#111827}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
+.app{max-width:1120px;margin:auto;padding:28px 22px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;background:var(--navy);color:#fff;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:21px}.brand h1{font-size:22px;margin:0;letter-spacing:-.7px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.topright{display:flex;align-items:center;gap:10px}.month{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;color:#596277;font-size:13px}
+.intro{margin-bottom:22px}.intro h2{font-size:28px;letter-spacing:-1px;margin:0 0 6px}.intro p{color:var(--muted);margin:0;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:19px;box-shadow:0 4px 18px #202b4505}
+.stat{padding:21px}.stathead{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}.icon{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;font-size:17px}.ic-green{background:#e5f8f0;color:var(--green)}.ic-red{background:#fff0f1;color:var(--red)}.ic-blue{background:#eef0ff;color:var(--blue)}
+.amount{font-size:27px;font-weight:750;letter-spacing:-.8px;margin:13px 0 6px;overflow-wrap:anywhere}.sub{font-size:12px;color:var(--muted)}.positive{color:var(--green)}.negative{color:var(--red)}
+.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);gap:18px}.panel{padding:22px;margin-bottom:18px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.panelhead h3{font-size:16px;margin:0;letter-spacing:-.3px}.panelhead p{margin:5px 0 0;color:var(--muted);font-size:12px}
+button{border:0;cursor:pointer;font:inherit;transition:.15s}button:hover{transform:translateY(-1px)}.primary{background:var(--navy);color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:650}.outline{background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:10px;color:#5c6476;font-size:12px}
+.chart{height:185px;display:flex;align-items:end;justify-content:space-around;gap:12px;padding:8px 5px 0;border-bottom:1px solid var(--line)}.barwrap{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:8px;min-width:0}.bars{height:145px;width:100%;display:flex;align-items:end;justify-content:center;gap:4px}.bar{width:min(22px,38%);border-radius:6px 6px 2px 2px;min-height:3px}.bar.in{background:var(--green)}.bar.out{background:#dfe3fb}.monthlabel{font-size:11px;color:var(--muted);padding-bottom:10px}.legend{display:flex;gap:16px;margin-top:15px;font-size:12px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:6px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:#616b80;font-weight:600}.field input,.field select{width:100%;padding:12px 12px;border:1px solid var(--line);border-radius:11px;background:#fbfcfe;font:inherit;font-size:13px;color:var(--text);outline:none}.field input:focus,.field select:focus{border-color:#9ba5ff;box-shadow:0 0 0 3px #5c6df81a}.typebuttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.typebtn{padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font-size:13px}.typebtn.active.income{background:#e5f8f0;color:#087b55;border-color:#b7ecd8}.typebtn.active.expense{background:#fff0f1;color:#bf3e4b;border-color:#ffd2d6}.submit{width:100%;margin-top:16px}
+.transactions{display:flex;flex-direction:column}.transaction{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #f0f1f5}.transaction:last-child{border-bottom:0;padding-bottom:0}.txicon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:#f1f3f8;font-size:17px;flex-shrink:0}.txinfo{min-width:0;flex:1}.txinfo strong{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.txinfo span{font-size:11px;color:var(--muted);display:block;margin-top:4px}.txamount{font-size:13px;font-weight:700;white-space:nowrap}.delete{background:transparent;color:#9aa2b2;font-size:18px;padding:5px 3px}.delete:hover{color:var(--red)}.empty{text-align:center;color:var(--muted);padding:25px 8px;font-size:13px}
+.budgetline{display:flex;justify-content:space-between;font-size:12px;margin:16px 0 9px}.track{height:9px;background:#edf0f5;border-radius:9px;overflow:hidden}.progress{height:100%;width:0;background:var(--blue);border-radius:9px;transition:width .3s}.budgetrow{display:flex;gap:8px;margin-top:13px}.budgetrow input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px}
+.footer{text-align:center;color:#9aa2b2;font-size:11px;margin-top:12px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 17px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+@media(max-width:760px){.app{padding:20px 14px 35px}.top{align-items:flex-start}.brand h1{font-size:19px}.month{display:none}.intro h2{font-size:24px}.stats{grid-template-columns:1fr;gap:10px}.stat{padding:16px}.amount{font-size:24px;margin:8px 0 4px}.layout{grid-template-columns:1fr}.panel{padding:18px}.topright .primary{padding:11px 12px}.chart{gap:5px}.bars{gap:3px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo">M</div><div><h1>MiBalance</h1><p>TUS FINANZAS, MÁS CLARAS</p></div></div>
+  <div class="topright"><span class="month" id="todayLabel"></span><button class="primary" onclick="document.getElementById('description').focus()">+ Añadir movimiento</button></div>
+</header>
+<section class="intro"><h2>Hola, vamos a poner tus cuentas en orden.</h2><p>Controla lo que entra, lo que sale y cuánto te queda.</p></section>
+<section class="stats">
+  <div class="stat"><div class="stathead">Balance total <span class="icon ic-blue">↗</span></div><div class="amount" id="balance">$0,00</div><div class="sub">Ingresos menos gastos</div></div>
+  <div class="stat"><div class="stathead">Ingresos <span class="icon ic-green">↓</span></div><div class="amount positive" id="income">$0,00</div><div class="sub">Dinero que has recibido</div></div>
+  <div class="stat"><div class="stathead">Gastos <span class="icon ic-red">↑</span></div><div class="amount negative" id="expense">$0,00</div><div class="sub">Dinero que has utilizado</div></div>
+</section>
+<div class="layout">
+ <main>
+  <section class="panel">
+   <div class="panelhead"><div><h3>Resumen de movimientos</h3><p>Ingresos y gastos de los últimos 6 meses</p></div></div>
+   <div class="chart" id="chart"></div><div class="legend"><span><i class="dot" style="background:#16a879"></i>Ingresos</span><span><i class="dot" style="background:#dfe3fb"></i>Gastos</span></div>
+  </section>
+  <section class="panel">
+   <div class="panelhead"><div><h3>Movimientos recientes</h3><p>Tu actividad financiera</p></div><button class="outline" id="exportBtn">Exportar CSV</button></div>
+   <div class="transactions" id="transactions"></div>
+  </section>
+ </main>
+ <aside>
+  <section class="panel">
+   <div class="panelhead"><div><h3>Añadir movimiento</h3><p>Registra un ingreso o un gasto</p></div></div>
+   <form id="txForm">
+    <div class="field full"><label>Tipo de movimiento</label><div class="typebuttons"><button type="button" class="typebtn active income" data-type="income">↓ Ingreso</button><button type="button" class="typebtn expense" data-type="expense">↑ Gasto</button></div></div>
+    <div class="formgrid" style="margin-top:14px">
+     <div class="field full"><label for="description">Descripción</label><input id="description" maxlength="60" placeholder="Ej. Pago de un trabajo" required></div>
+     <div class="field"><label for="amount">Cantidad ($)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+     <div class="field"><label for="category">Categoría</label><select id="category"><option>Trabajo</option><option>Ventas</option><option>Regalo</option><option>Comida</option><option>Transporte</option><option>Estudios</option><option>Entretenimiento</option><option>Hogar</option><option>Otros</option></select></div>
+     <div class="field full"><label for="date">Fecha</label><input id="date" type="date" required></div>
+    </div>
+    <button class="primary submit" type="submit">Guardar movimiento</button>
+   </form>
+  </section>
+  <section class="panel">
+   <div class="panelhead"><div><h3>Presupuesto mensual</h3><p>Define un límite para tus gastos</p></div></div>
+   <div class="budgetline"><span>Gastos del mes</span><strong id="budgetNumbers">$0 / $200</strong></div>
+   <div class="track"><div class="progress" id="progress"></div></div>
+   <div class="budgetrow"><input type="number" min="1" step="1" id="budgetInput" placeholder="Presupuesto ($)"><button class="outline" id="saveBudget">Guardar</button></div>
+   <p class="sub" id="budgetHint" style="margin-bottom:0">Elige un presupuesto realista para ti.</p>
+  </section>
+ </aside>
+</div>
+<div class="footer">MiBalance · Tus datos se guardan en este navegador, no en un servidor.</div>
+</div><div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('es-EC',{style:'currency',currency:'USD'}).format(n);
+const localDate=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+let items=[];let type='income';let budget=200;
+try{items=JSON.parse(localStorage.getItem('mibalance_items')||'[]');budget=Number(localStorage.getItem('mibalance_budget')||200)}catch(e){items=[]}
+$('date').value=localDate();
+$('todayLabel').textContent=new Date().toLocaleDateString('es-EC',{month:'long',year:'numeric'});
+function save(){localStorage.setItem('mibalance_items',JSON.stringify(items));localStorage.setItem('mibalance_budget',String(budget))}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+document.querySelectorAll('.typebtn').forEach(btn=>btn.addEventListener('click',()=>{type=btn.dataset.type;document.querySelectorAll('.typebtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}));
+$('txForm').addEventListener('submit',e=>{e.preventDefault();const description=$('description').value.trim(),amount=Number($('amount').value),date=$('date').value;if(!description||!Number.isFinite(amount)||amount<=0||!date){toast('Revisa los datos del movimiento');return}items.push({id:Date.now()+Math.random(),description,amount,type,category:$('category').value,date});save();render();$('txForm').reset();$('date').value=localDate();type='income';document.querySelectorAll('.typebtn').forEach(b=>b.classList.toggle('active',b.dataset.type==='income'));toast('Movimiento guardado correctamente')});
+function render(){
+ const income=items.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0),expense=items.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0);
+ $('balance').textContent=money(income-expense);$('income').textContent=money(income);$('expense').textContent=money(expense);
+ const sorted=[...items].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+ $('transactions').innerHTML=sorted.length?sorted.slice(0,8).map(x=>`<div class="transaction"><div class="txicon">${x.type==='income'?'↙':'↗'}</div><div class="txinfo"><strong>${esc(x.description)}</strong><span>${esc(x.category)} · ${new Date(x.date+'T12:00:00').toLocaleDateString('es-EC',{day:'numeric',month:'short',year:'numeric'})}</span></div><div class="txamount ${x.type==='income'?'positive':'negative'}">${x.type==='income'?'+':'−'}${money(x.amount)}</div><button class="delete" aria-label="Eliminar ${esc(x.description)}" title="Eliminar movimiento" onclick="removeItem(${x.id})">×</button></div>`).join(''):'<div class="empty">Todavía no hay movimientos.<br>Añade el primero en el formulario.</div>';
+ renderChart();renderBudget();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function removeItem(id){items=items.filter(x=>x.id!==id);save();render();toast('Movimiento eliminado')}
+function renderChart(){const now=new Date(),months=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({year:d.getFullYear(),month:d.getMonth(),label:d.toLocaleDateString('es-EC',{month:'short'}),inc:0,out:0})}items.forEach(x=>{const d=new Date(x.date+'T12:00:00'),m=months.find(m=>m.year===d.getFullYear()&&m.month===d.getMonth());if(m)m[x.type==='income'?'inc':'out']+=x.amount});const max=Math.max(1,...months.flatMap(m=>[m.inc,m.out]));$('chart').innerHTML=months.map(m=>`<div class="barwrap"><div class="bars"><div class="bar in" title="Ingresos: ${money(m.inc)}" style="height:${Math.max(m.inc?3:0,m.inc/max*100)}%"></div><div class="bar out" title="Gastos: ${money(m.out)}" style="height:${Math.max(m.out?3:0,m.out/max*100)}%"></div></div><div class="monthlabel">${esc(m.label)}</div></div>`).join('')}
+function renderBudget(){const now=localDate().slice(0,7),spent=items.filter(x=>x.type==='expense'&&x.date.startsWith(now)).reduce((a,x)=>a+x.amount,0),pct=Math.min(100,spent/budget*100);$('budgetNumbers').textContent=`${money(spent)} / ${money(budget)}`;$('progress').style.width=pct+'%';$('progress').style.background=spent>budget?'var(--red)':'var(--blue)';$('budgetHint').textContent=spent>budget?'Has superado tu presupuesto mensual.':`Has utilizado ${Math.round(spent/budget*100)}% de tu presupuesto.`;$('budgetInput').value=budget}
+$('saveBudget').addEventListener('click',()=>{const v=Number($('budgetInput').value);if(!Number.isFinite(v)||v<=0){toast('Escribe un presupuesto válido');return}budget=v;save();renderBudget();toast('Presupuesto actualizado')});
+$('exportBtn').addEventListener('click',()=>{if(!items.length){toast('No hay movimientos para exportar');return}const rows=[['Descripción','Tipo','Cantidad USD','Categoría','Fecha'],...items.map(x=>[x.description,x.type==='income'?'Ingreso':'Gasto',x.amount,x.category,x.date])];const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='mibalance-movimientos.csv';a.click();URL.revokeObjectURL(url);toast('Archivo CSV exportado')});
+render();
+</script>
+</body>
+</html>
